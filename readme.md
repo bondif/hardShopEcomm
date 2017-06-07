@@ -8,7 +8,7 @@ To get the project up and running on your local machine, do the following. I ass
 - Edit the created .env file at the root of your project, to add database credentials, etc
 ```bash
 # download the database
-https://drive.google.com/open?id=0B-Lv_389Zt6zWkdBNGF2U1FxOE0
+[https://drive.google.com/open?id=0B-Lv_389Zt6zWkdBNGF2U1FxOE0](hardShopEcomm.sql)
 ```
 ```bash
 php artisan serve
