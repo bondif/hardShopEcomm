@@ -16,53 +16,80 @@ class RestProductController extends Controller
             ->join('hasDiscount', 'products.idProd', '=', 'hasDiscount.idProd')
             ->join('discounts', 'discounts.idDiscount', '=', 'hasDiscount.idDiscount')
             ->select(DB::raw('products.*, round(products.price * discounts.tauxDiscount/100, 2) as newPrice'))
+            ->orderBy('newPrice', 'desc')
             ->get();
-        //dd($products);
-        foreach($products as $product){
-            $images = Image::where('idProd', $product->idProd)->get(['image']);
-            $product->images = $images;
-        }
-        return $products;
-        /*return DB::table('products')
-            ->join('hasDiscount', 'products.idProd', '=', 'hasDiscount.idProd')
-            ->join('discounts', 'discounts.idDiscount', '=', 'hasDiscount.idDiscount')
-            ->select('products.*', ['productprice*tauxDiscount/100 as newPrice'])
-            ->get();*/
-        //return Product::with('images')->get();
-        /*$path = storage_path().'/app/public'.'/images/admin1.jpg';
-        if (file_exists($path)) {
-            return Response::download($path);
-        }*/
+
+        return $this->getProdImages($products);
     }
 
     public function bestProduct()
     {
-        return 'It Works!';
+        $prods = DB::table('products')
+            ->join('hasDiscount', 'products.idProd', '=', 'hasDiscount.idProd')
+            ->join('discounts', 'discounts.idDiscount', '=', 'hasDiscount.idDiscount')
+            ->select(DB::raw('products.*, round(products.price * discounts.tauxDiscount/100, 2) as newPrice'))
+            ->where('price', DB::raw('(select min(price) from products)'))
+            ->limit(1)
+            ->get();
+        return $this->getProdImages($prods);
     }
 
     public function getBestSellers(){
-        return 'It Works!';
+        $prods = DB::table('products')
+            ->join('hasDiscount', 'products.idProd', '=', 'hasDiscount.idProd')
+            ->join('discounts', 'discounts.idDiscount', '=', 'hasDiscount.idDiscount')
+            ->select(DB::raw('products.*, round(products.price * discounts.tauxDiscount/100, 2) as newPrice'))
+            ->where('price', '>=', DB::raw('(select min(price) from products)'))
+            ->orderBy('price', 'desc')
+            ->limit(6)
+            ->get();
+        return $this->getProdImages($prods);
     }
 
     public function getFeatured(){
-        return 'It Works!';
+        $prods = DB::table('products')
+            ->join('hasDiscount', 'products.idProd', '=', 'hasDiscount.idProd')
+            ->join('discounts', 'discounts.idDiscount', '=', 'hasDiscount.idDiscount')
+            ->select(DB::raw('products.*, round(products.price * discounts.tauxDiscount/100, 2) as newPrice'))
+            ->where('discounts.tauxDiscount', '>=', '50.00')
+            ->orderBy('newPrice', 'desc')
+            ->limit(6)
+            ->get();
+        return $this->getProdImages($prods);
     }
 
     public function getBestOffers(){
-        return 'It Works!';
+        $prods = DB::table('products')
+            ->join('hasDiscount', 'products.idProd', '=', 'hasDiscount.idProd')
+            ->join('discounts', 'discounts.idDiscount', '=', 'hasDiscount.idDiscount')
+            ->select(DB::raw('products.*, round(products.price * discounts.tauxDiscount/100, 2) as newPrice'))
+            ->orderBy('newPrice', 'desc')
+            ->limit(6)
+            ->get();
+        return $this->getProdImages($prods);
     }
 
     public function getImage($name){
         $path = storage_path().'/app/public'.'/images/' . $name;
+		//dd(storage_path());
         if (file_exists($path)) {
             return Response::download($path);
         }
     }
 
     public function getIcon($name){
-        $path = storage_path().'/app/public'.'/icons/' . $name . 'png';
+        $path = storage_path().'/app/public'.'/icons/' . $name . '.png';
+		//dd($path);
         if (file_exists($path)) {
             return Response::download($path);
         }
+    }
+
+    public function getProdImages($products){
+        foreach($products as $product){
+            $images = Image::where('idProd', $product->idProd)->get(['image']);
+            $product->images = $images;
+        }
+        return $products;
     }
 }
