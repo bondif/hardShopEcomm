@@ -6,7 +6,7 @@ To get the project up and running on your local machine, do the following. I ass
 - Run composer install, to install dependencies
 - Run npm install to install npm dependencies
 - Edit the created .env file at the root of your project, to add database credentials, etc
-- download the database => https://drive.google.com/open?id=0B-Lv_389Zt6zWkdBNGF2U1FxOE0
+- download the database => https://drive.google.com/open?id=0B-Lv_389Zt6zMmdHUTJSalF6ZU0
 ```bash
 php artisan serve
 ```
